@@ -11,6 +11,10 @@ import (
 	"github.com/go-pg/pg/v10"
 )
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
 // start api with the pgdb and return a chi router
 func StartAPI(pgdb *pg.DB) *chi.Mux {
 	//get the router
@@ -53,6 +57,7 @@ type CardsResponse struct {
 }
 
 func createCard(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	//get the request body and decode it
 	req := &CreateCardRequest{}
 	err := json.NewDecoder(r.Body).Decode(req)
@@ -134,6 +139,7 @@ func createCard(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCards(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	//get db from ctx
 	pgdb, ok := r.Context().Value("DB").(*pg.DB)
 	if !ok {
