@@ -20,8 +20,8 @@ func StartAPI(pgdb *pg.DB) *chi.Mux {
 	r.Use(middleware.Logger, middleware.WithValue("DB", pgdb))
 
 	r.Route("/cards", func(r chi.Router) {
-		r.Post("/", createComment)
-		r.Get("/", getComments)
+		r.Post("/", createCard)
+		r.Get("/", getCards)
 	})
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +32,13 @@ func StartAPI(pgdb *pg.DB) *chi.Mux {
 }
 
 type CreateCardRequest struct {
-	Card string `json:"card"`
+	Subject              string `json:"subject"`
+	Task_name            string `json:"task_name"`
+	Color                string `json:"color"`
+	Deadline             string `json:"deadline"`
+	Task_info_link       string `json:"task_info_link"`
+	Task_submission_link string `json:"task_submission_link"`
+	Task_enrollment_link string `json:"task_enrollment_link"`
 }
 type CardResponse struct {
 	// Success bool         `json:"success"`
@@ -43,10 +49,10 @@ type CardResponse struct {
 type CardsResponse struct {
 	// Success bool           `json:"success"`
 	// Error   string         `json:"error"`
-	Cards []*models.Card `json:""`
+	Cards []*models.Card `json:"cards"`
 }
 
-func createComment(w http.ResponseWriter, r *http.Request) {
+func createCard(w http.ResponseWriter, r *http.Request) {
 	//get the request body and decode it
 	req := &CreateCardRequest{}
 	err := json.NewDecoder(r.Body).Decode(req)
@@ -87,7 +93,15 @@ func createComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//if we can get the db then
-	card, err := models.CreateCard(pgdb, &models.Card{})
+	card, err := models.CreateCard(pgdb, &models.Card{
+		Subject:              req.Subject,
+		Task_name:            req.Task_name,
+		Color:                req.Color,
+		Deadline:             req.Deadline,
+		Task_info_link:       req.Task_info_link,
+		Task_submission_link: req.Task_submission_link,
+		Task_enrollment_link: req.Task_enrollment_link,
+	})
 	if err != nil {
 		res := &CardResponse{
 			// Success: false,
@@ -119,7 +133,7 @@ func createComment(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func getComments(w http.ResponseWriter, r *http.Request) {
+func getCards(w http.ResponseWriter, r *http.Request) {
 	//get db from ctx
 	pgdb, ok := r.Context().Value("DB").(*pg.DB)
 	if !ok {

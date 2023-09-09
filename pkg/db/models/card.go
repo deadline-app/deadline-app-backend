@@ -3,14 +3,14 @@ package models
 import "github.com/go-pg/pg/v10"
 
 type Card struct {
-	ID                    int64  `json:"id"`
-	Subject               string `json:"subject"`
-	Task_name             string `json:"task_name"`
-	Color                 string `json:"color"`
-	Deadline              string `json:"deadline"`
-	Task_info_link        string `json:"task_info_link"`
-	Task_isubmission_link string `json:"task_submission_link"`
-	Task_enrollment_link  string `json:"task_enrollment_link"`
+	ID                   int64  `json:"id"`
+	Subject              string `json:"subject"`
+	Task_name            string `json:"task_name"`
+	Color                string `json:"color"`
+	Deadline             string `json:"deadline"`
+	Task_info_link       string `json:"task_info_link"`
+	Task_submission_link string `json:"task_submission_link"`
+	Task_enrollment_link string `json:"task_enrollment_link"`
 }
 
 func CreateCard(db *pg.DB, req *Card) (*Card, error) {
