@@ -137,11 +137,11 @@ func getCards(w http.ResponseWriter, r *http.Request) {
 	//get db from ctx
 	pgdb, ok := r.Context().Value("DB").(*pg.DB)
 	if !ok {
-		res := &CardsResponse{
-			// Success: false,
-			// Error:   "could not get DB from context",
-			Cards: nil,
-		}
+		var res []*models.Card //CardsResponse{
+		// Success: false,
+		// Error:   "could not get DB from context",
+		// Cards: nil,
+		//}
 		err := json.NewEncoder(w).Encode(res)
 		if err != nil {
 			log.Printf("error sending response %v\n", err)
@@ -152,11 +152,7 @@ func getCards(w http.ResponseWriter, r *http.Request) {
 	//call models package to access the database and return the comments
 	cards, err := models.GetAllCards(pgdb)
 	if err != nil {
-		res := &CardsResponse{
-			// Success: false,
-			// Error:   err.Error(),
-			Cards: nil,
-		}
+		res := &cards
 		err := json.NewEncoder(w).Encode(res)
 		if err != nil {
 			log.Printf("error sending response %v\n", err)
@@ -165,11 +161,7 @@ func getCards(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//positive response
-	res := &CardsResponse{
-		// Success: true,
-		// Error:   "",
-		Cards: cards,
-	}
+	res := &cards
 	//encode the positive response to json and send it back
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
