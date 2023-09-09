@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS cards (
+    id SERIAL PRIMARY KEY,
+    subject VARCHAR NOT NULL,
+    task_name VARCHAR NOT NULL
+);
