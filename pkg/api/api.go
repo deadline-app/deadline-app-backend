@@ -35,15 +35,15 @@ type CreateCardRequest struct {
 	Card string `json:"card"`
 }
 type CardResponse struct {
-	Success bool         `json:"success"`
-	Error   string       `json:"error"`
-	Card    *models.Card `json:"card"`
+	// Success bool         `json:"success"`
+	// Error   string       `json:"error"`
+	Card *models.Card `json:"card"`
 }
 
 type CardsResponse struct {
-	Success bool           `json:"success"`
-	Error   string         `json:"error"`
-	Cards   []*models.Card `json:"cards"`
+	// Success bool           `json:"success"`
+	// Error   string         `json:"error"`
+	Cards []*models.Card `json:""`
 }
 
 func createComment(w http.ResponseWriter, r *http.Request) {
@@ -54,9 +54,9 @@ func createComment(w http.ResponseWriter, r *http.Request) {
 	//send a response with an error
 	if err != nil {
 		res := &CardResponse{
-			Success: false,
-			Error:   err.Error(),
-			Card:    nil,
+			// Success: false,
+			// Error:   err.Error(),
+			Card: nil,
 		}
 		err = json.NewEncoder(w).Encode(res)
 		//if there's an error with encoding handle it
@@ -73,9 +73,9 @@ func createComment(w http.ResponseWriter, r *http.Request) {
 	//and send an adequate response
 	if !ok {
 		res := &CardResponse{
-			Success: false,
-			Error:   "could not get the DB from context",
-			Card:    nil,
+			// Success: false,
+			// Error:   "could not get the DB from context",
+			Card: nil,
 		}
 		err = json.NewEncoder(w).Encode(res)
 		//if there's an error with encoding handle it
@@ -90,9 +90,9 @@ func createComment(w http.ResponseWriter, r *http.Request) {
 	card, err := models.CreateCard(pgdb, &models.Card{})
 	if err != nil {
 		res := &CardResponse{
-			Success: false,
-			Error:   err.Error(),
-			Card:    nil,
+			// Success: false,
+			// Error:   err.Error(),
+			Card: nil,
 		}
 		err = json.NewEncoder(w).Encode(res)
 		//if there's an error with encoding handle it
@@ -106,9 +106,9 @@ func createComment(w http.ResponseWriter, r *http.Request) {
 	//everything is good
 	//let's return a positive response
 	res := &CardResponse{
-		Success: true,
-		Error:   "",
-		Card:    card,
+		// Success: true,
+		// Error:   "",
+		Card: card,
 	}
 	err = json.NewEncoder(w).Encode(res)
 	if err != nil {
@@ -124,9 +124,9 @@ func getComments(w http.ResponseWriter, r *http.Request) {
 	pgdb, ok := r.Context().Value("DB").(*pg.DB)
 	if !ok {
 		res := &CardsResponse{
-			Success: false,
-			Error:   "could not get DB from context",
-			Cards:   nil,
+			// Success: false,
+			// Error:   "could not get DB from context",
+			Cards: nil,
 		}
 		err := json.NewEncoder(w).Encode(res)
 		if err != nil {
@@ -139,9 +139,9 @@ func getComments(w http.ResponseWriter, r *http.Request) {
 	cards, err := models.GetAllCards(pgdb)
 	if err != nil {
 		res := &CardsResponse{
-			Success: false,
-			Error:   err.Error(),
-			Cards:   nil,
+			// Success: false,
+			// Error:   err.Error(),
+			Cards: nil,
 		}
 		err := json.NewEncoder(w).Encode(res)
 		if err != nil {
@@ -152,9 +152,9 @@ func getComments(w http.ResponseWriter, r *http.Request) {
 	}
 	//positive response
 	res := &CardsResponse{
-		Success: true,
-		Error:   "",
-		Cards:   cards,
+		// Success: true,
+		// Error:   "",
+		Cards: cards,
 	}
 	//encode the positive response to json and send it back
 	err = json.NewEncoder(w).Encode(res)
