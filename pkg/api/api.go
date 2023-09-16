@@ -8,12 +8,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-pg/pg/v10"
 )
-
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-}
 
 // start api with the pgdb and return a chi router
 func StartAPI(pgdb *pg.DB) *chi.Mux {
@@ -21,15 +18,18 @@ func StartAPI(pgdb *pg.DB) *chi.Mux {
 	r := chi.NewRouter()
 	//add middleware
 	//in this case we will store our DB to use it later
-	r.Use(middleware.Logger, middleware.WithValue("DB", pgdb))
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"https://*", "http://*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}), middleware.Logger, middleware.WithValue("DB", pgdb))
 
 	r.Route("/cards", func(r chi.Router) {
 		r.Post("/", createCard)
 		r.Get("/", getCards)
-	})
-
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("up and running"))
 	})
 
 	return r
@@ -57,7 +57,6 @@ type CardsResponse struct {
 }
 
 func createCard(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	//get the request body and decode it
 	req := &CreateCardRequest{}
 	err := json.NewDecoder(r.Body).Decode(req)
@@ -139,7 +138,6 @@ func createCard(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCards(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	//get db from ctx
 	pgdb, ok := r.Context().Value("DB").(*pg.DB)
 	if !ok {
